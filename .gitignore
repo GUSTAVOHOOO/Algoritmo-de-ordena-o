@@ -1,0 +1,34 @@
+# ── Go ────────────────────────────────────────────────────────────────────────
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/bin/
+/dist/
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+.eggs/
+dist/
+build/
+*.log
+
+# ── Output (imagens e CSVs gerados) ──────────────────────────────────────────
+# Mantemos os CSVs simulados e imagens no repositório para referência
+# output/
+
+# ── IDEs ──────────────────────────────────────────────────────────────────────
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
