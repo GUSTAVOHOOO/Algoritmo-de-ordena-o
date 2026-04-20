@@ -242,3 +242,121 @@ func partitionInstrumented(arr []int, low, high int, cmp, swaps *int64) int {
 		*swaps++
 	}
 }
+
+// ─────────────────────────────────────────────────────────────
+// Heap Sort
+// Complexidade: O(n log n) — todos os casos; Memória O(1)
+// ─────────────────────────────────────────────────────────────
+
+// HeapSorter implementa SortAlgorithm com contagem de operações.
+type HeapSorter struct{}
+
+func (HeapSorter) Name() string { return "HeapSort" }
+
+func (HeapSorter) Sort(arr []int) SortResult {
+	var cmp, swaps int64
+	n := len(arr)
+
+	heapDown := func(i, size int) {
+		for {
+			largest := i
+			l, r := 2*i+1, 2*i+2
+			if l < size {
+				cmp++
+				if arr[l] > arr[largest] {
+					largest = l
+				}
+			}
+			if r < size {
+				cmp++
+				if arr[r] > arr[largest] {
+					largest = r
+				}
+			}
+			if largest == i {
+				break
+			}
+			arr[i], arr[largest] = arr[largest], arr[i]
+			swaps++
+			i = largest
+		}
+	}
+
+	for i := n/2 - 1; i >= 0; i-- {
+		heapDown(i, n)
+	}
+	for i := n - 1; i > 0; i-- {
+		arr[0], arr[i] = arr[i], arr[0]
+		swaps++
+		heapDown(0, i)
+	}
+	return SortResult{arr, cmp, swaps}
+}
+
+// ─────────────────────────────────────────────────────────────
+// Radix Sort
+// Complexidade: O(n·k) — todos os casos; k = dígitos do maior valor
+// ─────────────────────────────────────────────────────────────
+
+// RadixSorter implementa SortAlgorithm com contagem de operações.
+// Comparações são zero (radix não compara elementos diretamente);
+// Swaps contam cada escrita no buffer de saída.
+type RadixSorter struct{}
+
+func (RadixSorter) Name() string { return "RadixSort" }
+
+func (RadixSorter) Sort(arr []int) SortResult {
+	var swaps int64
+
+	countSort := func(a []int, exp int) []int {
+		var digits [10]int
+		out := make([]int, len(a))
+		for _, v := range a {
+			digits[(v/exp)%10]++
+		}
+		for i := 1; i < 10; i++ {
+			digits[i] += digits[i-1]
+		}
+		for i := len(a) - 1; i >= 0; i-- {
+			idx := (a[i]/exp)%10
+			digits[idx]--
+			out[digits[idx]] = a[i]
+			swaps++
+		}
+		return out
+	}
+
+	unsignedRadix := func(a []int) []int {
+		if len(a) == 0 {
+			return a
+		}
+		mx := a[0]
+		for _, v := range a[1:] {
+			if v > mx {
+				mx = v
+			}
+		}
+		for exp := 1; mx/exp > 0; exp *= 10 {
+			a = countSort(a, exp)
+		}
+		return a
+	}
+
+	var neg, pos []int
+	for _, v := range arr {
+		if v < 0 {
+			neg = append(neg, -v)
+		} else {
+			pos = append(pos, v)
+		}
+	}
+
+	neg = unsignedRadix(neg)
+	for i, j := 0, len(neg)-1; i <= j; i, j = i+1, j-1 {
+		neg[i], neg[j] = -neg[j], -neg[i]
+	}
+	pos = unsignedRadix(pos)
+
+	copy(arr, append(neg, pos...))
+	return SortResult{arr, 0, swaps}
+}

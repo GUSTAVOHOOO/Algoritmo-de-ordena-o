@@ -1,0 +1,13 @@
+Algorithm,DataType,Runs,MinMs,MaxMs,MeanMs,StdDevMs,MedianMs
+HeapSort,aleatorio,3,48.628,50.758,50.025,0.988,50.691
+HeapSort,invertido,3,26.778,38.421,31.801,4.886,30.202
+HeapSort,ordenado,3,26.073,32.795,28.583,2.997,26.880
+MergeSort,aleatorio,3,49.205,52.518,50.503,1.444,49.786
+MergeSort,invertido,3,23.171,24.718,23.732,0.700,23.306
+MergeSort,ordenado,3,22.806,28.887,25.181,2.655,23.850
+QuickSort,aleatorio,3,32.219,32.660,32.467,0.185,32.524
+QuickSort,invertido,3,6.880,7.925,7.573,0.490,7.913
+QuickSort,ordenado,3,7.022,8.563,7.543,0.721,7.044
+RadixSort,aleatorio,3,19.317,19.617,19.450,0.125,19.415
+RadixSort,invertido,3,16.514,17.630,17.082,0.455,17.101
+RadixSort,ordenado,3,15.240,17.483,16.402,0.917,16.483

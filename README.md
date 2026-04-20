@@ -1,125 +1,139 @@
+<div align="center">
+
 # Benchmark de Algoritmos de Ordenação
 
-> **Trabalho acadêmico** desenvolvido no âmbito da disciplina de **Pesquisa e Ordenação**  
-> [Universidade Tecnológica Federal do Paraná — UTFPR](https://www.utfpr.edu.br/)
+### Análise Empírica e Reprodutível em Go 1.23
 
-Este repositório contém uma infraestrutura de benchmarking científico para análise experimental do desempenho de algoritmos de ordenação clássicos. O projeto está em desenvolvimento contínuo: novos algoritmos serão incorporados ao longo da disciplina, e os resultados experimentais completos subsidiarão a elaboração de um **artigo científico** ao final do semestre.
+[![Go Version](https://img.shields.io/badge/Go-1.23-00ADD8?style=flat-square&logo=go)](https://go.dev/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey?style=flat-square)]()
+[![UTFPR](https://img.shields.io/badge/UTFPR-Pesquisa%20e%20Ordenação-003580?style=flat-square)](https://www.utfpr.edu.br/)
 
----
+**Trabalho acadêmico** desenvolvido na disciplina de **Pesquisa e Ordenação**  
+[Universidade Tecnológica Federal do Paraná — UTFPR](https://www.utfpr.edu.br/)
 
-## Sumário
+**Autor:** Gustavo R. Mazur · `gustamomazur@alunos.utfpr.edu.br`
 
-- [Contexto e Motivação](#contexto-e-motivação)
-- [Por que Go?](#por-que-go)
-- [Algoritmos Implementados](#algoritmos-implementados)
-- [Metodologia Experimental](#metodologia-experimental)
-- [Estrutura do Repositório](#estrutura-do-repositório)
-- [Tech Stack](#tech-stack)
-- [Pré-requisitos](#pré-requisitos)
-- [Como Executar](#como-executar)
-- [Geração de Gráficos](#geração-de-gráficos)
-- [Métricas Coletadas](#métricas-coletadas)
-- [Resultados Parciais](#resultados-parciais)
-- [Adicionando Novos Algoritmos](#adicionando-novos-algoritmos)
-- [Próximas Etapas](#próximas-etapas)
+</div>
 
 ---
 
-## Contexto e Motivação
+## Sobre o Projeto
 
-A análise de complexidade assintótica — expressa em notação **Big-O** — constitui um dos pilares teóricos da Ciência da Computação. Contudo, a complexidade assintótica descreve o comportamento *no limite*, abstraindo constantes, coeficientes e efeitos de hardware como localidade de cache, pipeline do processador e custo de alocação de memória.
+Este repositório contém uma **infraestrutura de benchmarking científico** para análise empírica de algoritmos de ordenação clássicos. A abordagem é experimental e reprodutível: cada algoritmo é instrumentado com contagem exata de comparações e movimentações de elementos, executado em múltiplos tamanhos de entrada e tipos de dataset, e os resultados são exportados para análise estatística e geração de gráficos.
 
-Este projeto adota uma abordagem **empírica e reprodutível**:
+O projeto foi desenvolvido em **duas fases**, cada uma resultando em um artigo científico no formato [SBC (Sociedade Brasileira de Computação)](https://www.sbc.org.br/):
 
-1. Implementar os algoritmos com **instrumentação in-code** (contagem exata de comparações e trocas).
-2. Executar cada algoritmo sobre três tipos de dataset — **ordenado**, **invertido** e **aleatório** — em múltiplos tamanhos de entrada.
-3. Registrar métricas de tempo de execução, operações elementares e alocações de memória.
-4. Visualizar e comparar os resultados para validar (ou contestar) as previsões teóricas em condições reais de hardware.
-
-O objetivo final é produzir evidências experimentais que complementem a análise teórica e que possam ser reportadas em formato científico.
+| Fase | Algoritmos | Artigo |
+|:---:|---|:---:|
+| 1 | Bubble Sort, Selection Sort, Insertion Sort, Shell Sort | [📄 Ver PDF](artigo-bubble/artigo.pdf) |
+| 2 | Quick Sort, Merge Sort, Heap Sort, Radix Sort | [📄 Ver PDF](artigo-qmhr/artigo.pdf) |
 
 ---
 
-## Por que Go?
+## Artigos Científicos
 
-A escolha da linguagem **Go (Golang)** para este benchmark não é arbitrária. Ela responde a requisitos científicos precisos:
+### Artigo 1 — Algoritmos O(n²)
 
-### 1. Compilação para código nativo (assembly)
+> **"Análise Empírica de Algoritmos de Ordenação: Uma Avaliação Experimental de Bubble Sort, Selection Sort, Insertion Sort e Shell Sort em Entradas de Grande Volume"**
 
-Go é uma linguagem **compilada estaticamente**: o compilador `gc` gera código de máquina nativo (x86-64, ARM64, etc.) diretamente, sem intermediários como bytecode ou interpretação em tempo de execução. Isso significa que as operações de comparação e troca executam em instruções de assembly, sem overhead de JIT warm-up (como em Java/JVM) ou de interpretação (como em Python).
+[**→ Leia o artigo completo (PDF)**](artigo-bubble/artigo.pdf)
 
-Para benchmarks de algoritmos, isso é fundamental: o tempo medido reflete o custo computacional real das operações, não artefatos do ambiente de execução.
+**Principais achados:**
+- Bubble Sort e Insertion Sort atingem tempo ≈ 0 ms para entradas ordenadas (melhor caso O(n) confirmado)
+- Selection Sort mantém comportamento uniforme independente da distribuição de entrada — ausência de melhor caso em comparações
+- Shell Sort supera os demais algoritmos O(n²) em até **8.000×** para n = 1.500.000 elementos aleatórios
+- A diferença de classe de complexidade é o fator dominante em grande escala
 
-### 2. Controle explícito do Garbage Collector
+---
 
-Go permite invocar o GC manualmente via `runtime.GC()`. O runner do benchmark faz **duas chamadas explícitas ao GC** antes de cada medição:
+### Artigo 2 — Algoritmos O(n log n) e Não-Comparativo
 
-```go
-runtime.GC()
-runtime.GC() // duas passagens para maior garantia
-```
+> **"Análise Empírica de Algoritmos de Ordenação: Uma Avaliação Experimental de Quick Sort, Merge Sort, Heap Sort e Radix Sort em Entradas de Grande Volume"**
 
-Isso elimina o ruído causado por coletas de lixo de ciclos anteriores contaminando a medição atual — um problema crítico em linguagens com GC automático como Java ou C#.
+[**→ Leia o artigo completo (PDF)**](artigo-qmhr/artigo.pdf)
 
-### 3. Medição de tempo de alta resolução
-
-`time.Since(start)` em Go usa o relógio monotônico do sistema operacional com resolução de **nanossegundos**, sem conversões de tipo ou arredondamentos intermediários. A medição é feita com o mínimo de código entre `start` e `elapsed`:
-
-```go
-start := time.Now()
-sr := algo.Sort(arr)      // única instrução entre as marcas de tempo
-elapsed := time.Since(start)
-```
-
-### 4. Ausência de custo oculto por abstrações
-
-A interface `SortAlgorithm` em Go usa **dispatch estático via tabela de métodos** (similar ao vtable do C++), sem boxing, reflexão em tempo de execução ou overhead de closures. Os algoritmos operam diretamente sobre slices (`[]int`), que são apenas um ponteiro + comprimento + capacidade — sem wrapper objects.
-
-### 5. Reprodutibilidade via seed fixa
-
-Go permite fixar a seed do gerador pseudoaleatório:
-
-```go
-rng := rand.New(rand.NewSource(42))
-```
-
-Todos os runs produzem exatamente os mesmos datasets aleatórios, garantindo **reprodutibilidade absoluta** dos experimentos em qualquer máquina.
-
-### Comparação com alternativas
-
-| Critério | Go | Python | Java | C/C++ |
-|---|:---:|:---:|:---:|:---:|
-| Compilado para nativo | ✅ | ❌ | ❌ (JVM) | ✅ |
-| Controle do GC | ✅ | ❌ | Parcial | N/A |
-| Tempo de desenvolvimento | ✅ | ✅ | ❌ | ❌ |
-| Sem overhead de JIT warm-up | ✅ | ✅ | ❌ | ✅ |
-| Stdlib robusta para benchmarks | ✅ | Parcial | ✅ | ❌ |
-
-Go oferece o equilíbrio ideal entre **precisão de medição** (próxima de C) e **produtividade de desenvolvimento** (próxima de Python).
+**Principais achados:**
+- Radix Sort é o algoritmo mais rápido em todos os cenários — **111 ms para 2.500.000 elementos**, contornando o limite inferior Ω(n log n)
+- Quick Sort com pivô mediana-de-três é **4,8× mais rápido** em entradas ordenadas do que em aleatórias — comportamento contra-intuitivo explicado pelo particionamento perfeito
+- Heap Sort sofre penalidade de **2,1×** em relação ao Quick Sort (n = 2.500.000) apesar da mesma classe assintótica, devido à baixa localidade de cache
+- Merge Sort apresenta o menor desvio padrão de todos: **0,14 ms** para n = 1.000.000 aleatório
 
 ---
 
 ## Algoritmos Implementados
 
-### Fase atual
+### Fase 1 — O(n²)
 
-| Algoritmo | Complexidade (pior) | Complexidade (médio) | Complexidade (melhor) | Complexidade de espaço |
+| Algoritmo | Pior caso | Caso médio | Melhor caso | Espaço |
 |---|:---:|:---:|:---:|:---:|
 | **Bubble Sort** | O(n²) | O(n²) | **O(n)** | O(1) |
 | **Selection Sort** | O(n²) | O(n²) | O(n²) | O(1) |
 | **Insertion Sort** | O(n²) | O(n²) | **O(n)** | O(1) |
-| **Shell Sort** | O(n log²n)* | O(n log²n)* | O(n log n) | O(1) |
+| **Shell Sort** | O(n log²n) | O(n log²n) | O(n log n) | O(1) |
 
-> *Shell Sort com sequência de Knuth (gap = n/2, n/4, ..., 1). A complexidade exata depende da sequência de gaps utilizada.
+### Fase 2 — O(n log n) e Não-Comparativo
 
-### Algoritmos previstos para as próximas fases
+| Algoritmo | Pior caso | Caso médio | Melhor caso | Espaço | Estável |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **Quick Sort** | O(n²)† | **O(n log n)** | O(n log n) | O(log n) | ❌ |
+| **Merge Sort** | O(n log n) | O(n log n) | O(n log n) | **O(n)** | ✅ |
+| **Heap Sort** | O(n log n) | O(n log n) | O(n log n) | O(1) | ❌ |
+| **Radix Sort** | O(nk) | O(nk) | O(nk) | O(n+k) | ✅ |
 
-- [ ] Merge Sort — O(n log n) estável, com custo de memória O(n)
-- [ ] Quick Sort — O(n log n) médio, O(n²) pior caso
-- [ ] Heap Sort — O(n log n) garantido, in-place
-- [ ] Counting Sort — O(n + k), não comparativo
-- [ ] Radix Sort — O(nk), não comparativo
-- [ ] Tim Sort — híbrido Merge + Insertion, usado em Python e Java
+> † Quick Sort com seleção de pivô pela **mediana de três** — mitiga o pior caso em entradas ordenadas/invertidas.
+
+---
+
+## Resultados
+
+### Fase 1 — Tempo médio de execução (escala log₁₀)
+
+| n = 750.000 elementos | n = 1.500.000 elementos |
+|:---:|:---:|
+| ![750k](output/plots_python/750k/py_tempo_medio750.png) | ![1500k](output/plots_python/1500k/py_tempo_medio1500.png) |
+
+> 🔵 aleatório · 🟢 invertido · 🌸 ordenado
+
+**Destaque — Shell Sort vs algoritmos O(n²) (n = 750.000, aleatório):**
+
+| Algoritmo | Tempo médio (ms) | vs Shell Sort |
+|---|---:|:---:|
+| Bubble Sort | 785.339 | 5.213× mais lento |
+| Selection Sort | 279.641 | 1.859× mais lento |
+| Insertion Sort | 84.355 | 561× mais lento |
+| **Shell Sort** | **150** | — |
+
+---
+
+### Fase 2 — Tempo médio de execução (escala log₁₀)
+
+| n = 300.000 elementos | n = 750.000 elementos |
+|:---:|:---:|
+| ![300k](output/plots_python/300000/py_tempo_medio.png) | ![750k](output/plots_python/750000/py_tempo_medio.png) |
+
+| n = 2.500.000 elementos |
+|:---:|
+| ![2500k](output/plots_python/2500000/py_tempo_medio.png) |
+
+> 🔵 aleatório · 🟢 invertido · 🌸 ordenado
+
+**Tempo médio de execução (ms) — todos os tamanhos:**
+
+| Algoritmo | Dataset | 300k | 450k | 750k | 1M | 2,5M |
+|---|---|---:|---:|---:|---:|---:|
+| Quick Sort | ordenado | 4,4 | 7,5 | 11,6 | 15,8 | 42,6 |
+| Quick Sort | invertido | 4,9 | 7,6 | 11,2 | 16,4 | 42,7 |
+| Quick Sort | aleatório | 21,5 | 32,5 | 56,3 | 75,8 | 200,9 |
+| Merge Sort | ordenado | 17,6 | 25,2 | 42,3 | 55,8 | 157,6 |
+| Merge Sort | invertido | 15,8 | 23,7 | 38,3 | 52,7 | 145,4 |
+| Merge Sort | aleatório | 33,4 | 50,5 | 83,3 | 112,4 | 297,7 |
+| Heap Sort | ordenado | 27,9 | 28,6 | 44,5 | 61,5 | 164,8 |
+| Heap Sort | invertido | 20,2 | 31,8 | 64,5 | 70,0 | 167,3 |
+| Heap Sort | aleatório | 33,2 | 50,0 | 92,3 | 126,8 | 430,2 |
+| **Radix Sort** | **ordenado** | **12,4** | **16,4** | **27,5** | **43,1** | **104,5** |
+| **Radix Sort** | **invertido** | **11,6** | **17,1** | **27,2** | **40,5** | **99,8** |
+| **Radix Sort** | **aleatório** | **14,4** | **19,5** | **31,1** | **47,3** | **111,4** |
 
 ---
 
@@ -127,40 +141,31 @@ Go oferece o equilíbrio ideal entre **precisão de medição** (próxima de C) 
 
 ### Design do experimento
 
-Cada combinação `(algoritmo, tipo de dataset, tamanho de entrada)` é executada **3 vezes** de forma independente, com as seguintes garantias:
+Cada combinação `(algoritmo × tipo de dataset × tamanho)` é executada **3 vezes** independentes:
 
-1. **Isolamento de dados**: cada execução recebe uma cópia limpa (`data.Clone`) do dataset original, evitando que uma execução afete as seguintes (os algoritmos modificam o slice in-place).
-2. **Limpeza do GC**: duas chamadas a `runtime.GC()` antes de cada medição.
-3. **Medição mínima**: nenhuma instrução de I/O entre `time.Now()` e `time.Since()`.
-4. **Coleta de memória**: `runtime.MemStats` capturado antes e depois de cada sort.
+1. **Cópia limpa de dados** — cada run recebe uma cópia isolada do dataset original
+2. **Limpeza do GC** — duas chamadas `runtime.GC()` antes de cada medição eliminam ruído de coletas anteriores
+3. **Relógio monotônico** — `time.Since(start)` com resolução de nanossegundos, sem I/O entre as marcas de tempo
+4. **Seed fixa** — `rand.NewSource(42)` garante datasets aleatórios idênticos em qualquer máquina
 
 ### Tipos de dataset
 
 | Tipo | Descrição | Caso teórico |
 |---|---|---|
-| `ordenado` | `[1, 2, 3, ..., n]` | Melhor caso para Bubble e Insertion Sort |
-| `invertido` | `[n, n-1, ..., 1]` | Pior caso para Bubble e Insertion Sort |
-| `aleatorio` | Permutação aleatória com seed fixa 42 | Caso médio |
+| `ordenado` | `[1, 2, 3, ..., n]` | Melhor caso para Bubble, Insertion, Quick (pivô mediana) |
+| `invertido` | `[n, n-1, ..., 1]` | Pior caso para Bubble, Insertion (sem pivô otimizado) |
+| `aleatório` | Permutação com seed fixa 42 | Caso médio |
 
-### Tamanhos de entrada avaliados
+### Ambiente de hardware
 
-| Tamanho | Execuções totais por algoritmo |
+| Componente | Especificação |
 |---|---|
-| 175.000 elementos | 3 runs × 3 datasets = 9 |
-| 250.000 elementos | 9 |
-| 500.000 elementos | 9 |
-| 750.000 elementos | 9 |
-| 1.500.000 elementos | 9 |
-
-### Estatísticas computadas
-
-Para cada grupo `(algoritmo, dataset)`, são calculados:
-
-- **Mínimo** — melhor tempo observado nas 3 execuções
-- **Máximo** — pior tempo observado
-- **Média aritmética** — estimador central
-- **Desvio padrão** — variabilidade / ruído da medição
-- **Mediana** — mais robusta a outliers que a média
+| Modelo | Dell G15 5515 |
+| Processador | AMD Ryzen 5 5600H, 3,3 GHz, 6 núcleos / 12 threads |
+| Arquitetura | x86-64 |
+| Memória RAM | 16 GB DDR4 |
+| Sistema Operacional | Windows 11 Home (Build 26200) |
+| Linguagem | Go 1.23 (compilação nativa, sem JIT) |
 
 ---
 
@@ -169,77 +174,65 @@ Para cada grupo `(algoritmo, dataset)`, são calculados:
 ```
 .
 ├── benchmark/
-│   ├── algorithms.go   # Implementações instrumentadas dos algoritmos
-│   │                   # (interface SortAlgorithm + structs concretas)
+│   ├── algorithms.go   # 8 algoritmos instrumentados (interface SortAlgorithm)
 │   ├── exporter.go     # Exportação de resultados e estatísticas para CSV
 │   ├── metrics.go      # Structs Result e Stats; cálculo de estatísticas
-│   └── runner.go       # Motor de benchmarking (geração, isolamento, medição)
+│   └── runner.go       # Motor de benchmarking (isolamento, medição, GC)
 │
 ├── cmd/
 │   └── benchmark/
-│       └── main.go     # Ponto de entrada: registra algoritmos e executa o benchmark
+│       └── main.go     # Ponto de entrada interativo (escolha de algoritmos e tamanho)
 │
 ├── data/
 │   └── generator.go    # Geração de datasets (ordenado, invertido, aleatório)
-│                       # Seed fixa 42 para reprodutibilidade
 │
 ├── scripts/
-│   └── plot_results.py # Geração de gráficos e tabelas com matplotlib/seaborn
+│   └── plot_results.py # Gráficos e tabelas com matplotlib / seaborn
 │
 ├── output/
-│   ├── benchmark_results.csv        # Execuções individuais (linha por run)
-│   ├── benchmark_results_750k.csv   # Idem para 750k elementos
-│   ├── benchmark_results_1500k.csv  # Idem para 1.5M elementos
-│   ├── benchmark_stats.csv          # Estatísticas agregadas
-│   ├── benchmark_stats_750k.csv
-│   ├── benchmark_stats_1500k.csv
 │   └── plots_python/
-│       ├── 175k/   → py_tempo_medio-175.png | py_tabela_resultados175.png | py_tabela_completa175.png
-│       ├── 250k/   → py_tempo_medio250.png  | ...
-│       ├── 500k/   → py_tempo_medio500.png  | ...
-│       ├── 750k/   → py_tempo_medio750.png  | ...
-│       └── 1500k/  → py_tempo_medio1500.png | ...
+│       ├── 300000/     # py_tempo_medio.png | benchmark_stats/results CSVs
+│       ├── 450000/
+│       ├── 750000/
+│       ├── 1000000/
+│       └── 2500000/
+│
+├── artigo-bubble/
+│   ├── artigo.tex      # Artigo SBC — Fase 1 (O(n²))
+│   ├── artigo.pdf      # PDF compilado
+│   └── referencias.bib
+│
+├── artigo-qmhr/
+│   ├── artigo.tex      # Artigo SBC — Fase 2 (O(n log n) + Radix)
+│   ├── artigo.pdf      # PDF compilado
+│   └── referencias.bib
 │
 ├── go.mod
-├── go.sum
-├── .gitignore
 └── README.md
 ```
 
 ---
 
-## Tech Stack
+## Por que Go?
 
-| Camada | Tecnologia | Versão | Papel |
-|---|---|---|---|
-| Benchmark | Go | 1.23+ | Implementação, instrumentação e medição |
-| Visualização | Python | 3.10+ | Geração de gráficos e tabelas |
-| Plots | matplotlib + seaborn | latest | Gráficos de barras com escala logarítmica |
-| Tabelas | dataframe-image | latest | Exportação de DataFrames pandas para PNG |
-| Dados | pandas | latest | Leitura e agregação dos CSVs |
+| Critério | Go | Python | Java | C/C++ |
+|---|:---:|:---:|:---:|:---:|
+| Compilado para código nativo | ✅ | ❌ | ❌ JVM | ✅ |
+| Controle explícito do GC | ✅ | ❌ | Parcial | N/A |
+| Sem JIT warm-up | ✅ | ✅ | ❌ | ✅ |
+| Desenvolvimento rápido | ✅ | ✅ | ❌ | ❌ |
+| Medição de memória heap nativa | ✅ | Parcial | Parcial | ❌ |
 
----
-
-## Pré-requisitos
-
-### Go
-
-- [Go 1.21+](https://go.dev/dl/) instalado e no `PATH`
-- Verificar: `go version`
-
-### Python
-
-- Python 3.10+
-- Biblioteca `pip` disponível
-- Dependências:
-
-```bash
-pip install pandas matplotlib seaborn dataframe-image
-```
+Go oferece o equilíbrio ideal entre **precisão de medição** (próxima de C) e **produtividade de desenvolvimento** (próxima de Python) — sem artefatos de JIT, sem overhead de interpretação.
 
 ---
 
 ## Como Executar
+
+### Pré-requisitos
+
+- [Go 1.21+](https://go.dev/dl/) — verificar com `go version`
+- Python 3.10+ com pip — para os gráficos
 
 ### 1. Clonar o repositório
 
@@ -248,139 +241,72 @@ git clone https://github.com/GUSTAVOHOOO/Algoritmo-de-ordena-o.git
 cd "Algoritmo-de-ordena-o"
 ```
 
-### 2. Configurar o tamanho do dataset
-
-Edite a constante `Size` em `data/generator.go`:
-
-```go
-const (
-    Seed int64 = 42
-    Size       = 175_000  // altere aqui: 250_000, 500_000, etc.
-)
-```
-
-### 3. Executar o benchmark
+### 2. Executar o benchmark
 
 ```bash
 go run cmd/benchmark/main.go
 ```
 
-**Saída esperada no terminal:**
+O programa solicita interativamente o tamanho do dataset e os algoritmos a executar:
 
 ```
 ╔══════════════════════════════════════════════════════╗
 ║     Benchmark de Algoritmos de Ordenação — Go        ║
 ╚══════════════════════════════════════════════════════╝
-  Seed fixa  : 42
-  Tamanho    : 175000 elementos
-  Execuções  : 3 por combinação
 
-📊 Gerando datasets (175000 elementos cada)...
-  ✓ ordenado     gerado
-  ✓ invertido    gerado
-  ✓ aleatorio    gerado
+▶ Digite o número de elementos para o dataset (padrão: 300000): 750000
 
-🚀 Iniciando benchmark: 4 algoritmos × 3 datasets × 3 execuções = 36 execuções totais
-
-► BubbleSort
-  [ 1/36] BubbleSort     | ordenado    | run 1 →      0.350 ms | cmps:          174999 | swaps:              0
-  ...
-
-💾 Exportando resultados...
-  ✓ output/benchmark_results.csv
-  ✓ output/benchmark_stats.csv
+▶ Selecione os algoritmos para rodar:
+   0 - TODOS
+   1 - BubbleSort
+   2 - SelectionSort
+   3 - InsertionSort
+   4 - ShellSort
+   5 - MergeSort
+   6 - QuickSort
+   7 - HeapSort
+   8 - RadixSort
+  Escolha (ex: 0, ou '5,6,7,8') [padrão: 0]: 5,6,7,8
 ```
 
-> ⚠️ **Atenção:** algoritmos O(n²) com entradas grandes (≥ 175.000 no pior caso) podem levar **vários minutos** por execução. O tempo total estimado para 175k elementos é de 20–60 minutos dependendo do hardware.
+> ⚠️ **Atenção:** algoritmos O(n²) (Bubble, Selection, Insertion) com entradas ≥ 500.000 elementos podem levar **vários minutos** por execução.
 
-### 4. Arquivos gerados
-
-| Arquivo | Conteúdo |
-|---|---|
-| `output/benchmark_results.csv` | Uma linha por execução individual (36 linhas para 4 algoritmos × 3 datasets × 3 runs) |
-| `output/benchmark_stats.csv` | Estatísticas agregadas: min, max, média, desvio padrão, mediana (12 linhas) |
-
----
-
-## Geração de Gráficos
-
-Com os CSVs gerados, execute o script Python:
+### 3. Gerar gráficos e tabelas
 
 ```bash
-# Usando venv (recomendado)
+# Criar e ativar ambiente virtual (recomendado)
 python -m venv .venv
-.venv\Scripts\activate        # Windows
-source .venv/bin/activate     # Linux/macOS
+.venv\Scripts\activate          # Windows
+source .venv/bin/activate       # Linux / macOS
 
 pip install pandas matplotlib seaborn dataframe-image
 
 python scripts/plot_results.py
 ```
 
-Os PNGs são salvos em `output/plots_python/<tamanho>/`:
+Os arquivos são salvos em `output/plots_python/<tamanho>/`:
 
 | Arquivo | Descrição |
 |---|---|
-| `py_tempo_medio<N>.png` | Gráfico de barras agrupado com escala logarítmica (base 10) |
-| `py_tabela_resultados<N>.png` | Tabela de estatísticas: min, max, média, desvio padrão, mediana |
-| `py_tabela_completa<N>.png` | Tabela completa com todas as execuções individuais |
-
-**Paleta de cores utilizada** (consistente em todos os tamanhos):
-
-| Cor | Dataset |
-|---|---|
-| 🔵 Azul `#4477AA` | `aleatorio` |
-| 🟢 Verde `#228833` | `invertido` |
-| 🌸 Rosa `#CC6677` | `ordenado` |
+| `py_tempo_medio.png` | Gráfico de barras agrupado com escala log₁₀ |
+| `py_tabela_resultados.png` | Tabela de estatísticas: min, max, média, desvio padrão |
+| `py_tabela_completa.png` | Tabela com todas as execuções individuais |
 
 ---
 
 ## Métricas Coletadas
 
-Cada execução registra os seguintes campos, exportados para CSV:
-
 | Campo | Tipo | Descrição |
 |---|---|---|
-| `Algorithm` | string | Nome do algoritmo (`BubbleSort`, `SelectionSort`, etc.) |
+| `Algorithm` | string | Nome do algoritmo |
 | `DataType` | string | Tipo do dataset: `ordenado`, `invertido`, `aleatorio` |
 | `Run` | int | Índice da execução (1, 2 ou 3) |
-| `InputSize` | int | Número de elementos no dataset |
-| `DurationNs` | int64 | Duração da ordenação em nanossegundos |
-| `DurationMs` | float64 | Duração em milissegundos (3 casas decimais) |
+| `InputSize` | int | Número de elementos |
+| `DurationNs` | int64 | Duração em nanossegundos |
+| `DurationMs` | float64 | Duração em milissegundos |
 | `Comparisons` | int64 | Total de comparações elemento-a-elemento |
-| `Swaps` | int64 | Total de trocas (movimentações de elementos) |
-| `MemAllocKB` | float64 | Alocações de heap durante a execução (KB) |
-
----
-
-## Resultados Parciais
-
-### Tempo médio de execução (escala log₁₀)
-
-As colunas representam: 🔵 aleatorio · 🟢 invertido · 🌸 ordenado
-
-| 175.000 elementos | 250.000 elementos |
-|:---:|:---:|
-| ![175k](output/plots_python/175k/py_tempo_medio-175.png) | ![250k](output/plots_python/250k/py_tempo_medio250.png) |
-
-| 500.000 elementos | 750.000 elementos |
-|:---:|:---:|
-| ![500k](output/plots_python/500k/py_tempo_medio500.png) | ![750k](output/plots_python/750k/py_tempo_medio750.png) |
-
-| 1.500.000 elementos |
-|:---:|
-| ![1500k](output/plots_python/1500k/py_tempo_medio1500.png) |
-
-### Observações experimentais
-
-| Observação | Algoritmo(s) | Explicação |
-|---|---|---|
-| Tempo ≈ 0 ms para dataset `ordenado` | BubbleSort, InsertionSort | Melhor caso O(n): apenas 1 passagem sem trocas |
-| Tempo uniforme independente do dataset | SelectionSort | Sempre faz n(n-1)/2 comparações, independente da entrada |
-| Crescimento ~4× ao dobrar n | BubbleSort, SelectionSort, InsertionSort | Confirma empiricamente O(n²) |
-| Crescimento ~2,2× ao dobrar n | ShellSort | Consistente com O(n log²n) |
-| Shell Sort até 8.000× mais rápido | Shell vs Bubble (1,5M, aleatório) | Diferença de classe de complexidade |
-| SelectionSort `ordenado` ≈ demais datasets | SelectionSort | Não há melhor caso — faz todas as comparações sempre |
+| `Swaps` | int64 | Movimentações de elementos (trocas, deslocamentos ou distribuições) |
+| `MemAllocKB` | float64 | Alocações cumulativas de heap durante a execução (KB) |
 
 ---
 
@@ -388,44 +314,43 @@ As colunas representam: 🔵 aleatorio · 🟢 invertido · 🌸 ordenado
 
 O projeto foi projetado para receber novos algoritmos **sem modificar nenhum arquivo existente**, exceto `main.go`:
 
-### Passo 1 — Implementar o algoritmo em `benchmark/algorithms.go`
+**Passo 1** — Implementar em `benchmark/algorithms.go`:
 
 ```go
-// MergeSorter implementa SortAlgorithm.
-type MergeSorter struct{}
+type TimSorter struct{}
 
-func (MergeSorter) Name() string { return "MergeSort" }
+func (TimSorter) Name() string { return "TimSort" }
 
-func (MergeSorter) Sort(arr []int) SortResult {
+func (TimSorter) Sort(arr []int) SortResult {
     var cmp, swaps int64
     // ... implementação com contagem de cmp e swaps
     return SortResult{arr, cmp, swaps}
 }
 ```
 
-### Passo 2 — Registrar em `cmd/benchmark/main.go`
+**Passo 2** — Registrar em `cmd/benchmark/main.go`:
 
 ```go
-algorithms := []benchmark.SortAlgorithm{
-    benchmark.BubbleSorter{},
-    benchmark.SelectionSorter{},
-    benchmark.InsertionSorter{},
-    benchmark.ShellSorter{},
-    benchmark.MergeSorter{},   // ← adicionar aqui
+allAlgorithms := []benchmark.SortAlgorithm{
+    // algoritmos existentes ...
+    benchmark.TimSorter{},  // ← adicionar aqui
 }
 ```
 
-Nenhum outro arquivo precisa ser alterado. O runner, o exporter e o script Python processam qualquer algoritmo automaticamente.
+O runner, o exporter e o script Python processam qualquer algoritmo automaticamente.
 
 ---
 
-## Próximas Etapas
+## Tech Stack
 
-- [ ] Implementar algoritmos de complexidade O(n log n): Merge Sort, Quick Sort, Heap Sort
-- [ ] Implementar algoritmos não-comparativos: Counting Sort, Radix Sort
-- [ ] Análise estatística formal (testes de hipótese para comparar médias entre runs)
-- [ ] Geração de gráficos de crescimento temporal (tempo × n) para ajuste de curva
-- [ ] Redação do artigo científico com todos os resultados consolidados
+| Camada | Tecnologia | Papel |
+|---|---|---|
+| Benchmark | Go 1.23 | Implementação, instrumentação e medição |
+| Visualização | Python 3.10+ | Gráficos e tabelas estatísticas |
+| Gráficos | matplotlib + seaborn | Barplots com escala logarítmica |
+| Tabelas | dataframe-image | Exportação de DataFrames para PNG |
+| Dados | pandas | Leitura e agregação de CSVs |
+| Artigos | LaTeX + SBC template | Publicação científica |
 
 ---
 
@@ -433,10 +358,10 @@ Nenhum outro arquivo precisa ser alterado. O runner, o exporter e o script Pytho
 
 **Universidade Tecnológica Federal do Paraná — UTFPR**  
 Disciplina: Pesquisa e Ordenação  
-Curso: Ciência da Computação / Engenharia de Computação
+Autor: Gustavo R. Mazur — `gustamomazur@alunos.utfpr.edu.br`
 
 ---
 
 ## Licença
 
-MIT
+[MIT](LICENSE)

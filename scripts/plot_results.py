@@ -2,21 +2,31 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+import glob as glob
 import dataframe_image as dfi
+import sys
 
 # Base directory of the script
 script_dir = os.path.dirname(os.path.abspath(__file__))
 # Data directory
 output_dir = os.path.abspath(os.path.join(script_dir, '..', 'output'))
+plots_python_dir = os.path.join(output_dir, 'plots_python')
 
-def load_data():
-    stats_path = os.path.join(output_dir, 'benchmark_stats.csv')
-    results_path = os.path.join(output_dir, 'benchmark_results.csv')
+SIZES = ['300000', '450000', '750000', '1000000', '2500000']
+
+def load_data(size):
+    stats_path = os.path.join(plots_python_dir, size, f'benchmark_stats_{size}_MSQSHSRS.csv')
+    results_path = os.path.join(plots_python_dir, size, f'benchmark_results_{size}_MSQSHSRS.csv')
+    
+    if not os.path.exists(stats_path):
+        print(f"[AVISO] Arquivo nao encontrado: {stats_path}")
+        return None, None
+    
     stats = pd.read_csv(stats_path)
     results = pd.read_csv(results_path)
     return stats, results
 
-def plot_tempo_medio(stats_df, out_dir):
+def plot_tempo_medio(stats_df, out_dir, size):
     plt.figure(figsize=(10, 6))
     
     # Configurar estilo
@@ -34,7 +44,8 @@ def plot_tempo_medio(stats_df, out_dir):
     # Configurar escala logarítmica para o eixo Y
     ax.set_yscale('log')
     
-    plt.title('Tempo Médio de Execução por Algoritmo', fontsize=14, pad=15)
+    size_label = f"{int(size):,}".replace(",", ".")
+    plt.title(f'Tempo Médio de Execução por Algoritmo (n={size_label})', fontsize=14, pad=15)
     plt.xlabel('Algoritmo', fontsize=12)
     plt.ylabel('Tempo Médio (ms) [escala log10]', fontsize=12)
     
@@ -73,7 +84,6 @@ def plot_tabela(stats_df, out_dir):
     df_formatted.rename(columns=colunas_pt, inplace=True)
         
     table_path = os.path.join(out_dir, 'py_tabela_resultados.png')
-    # Tenta usar o conversor padrão, se falhar pode precisar do parâmetro table_conversion='matplotlib'
     dfi.export(df_formatted, table_path)
 
 def plot_tabela_completa(results_df, out_dir):
@@ -103,20 +113,40 @@ def plot_tabela_completa(results_df, out_dir):
     dfi.export(df_formatted, table_path)
 
 
+def process_size(size):
+    out_dir = os.path.join(plots_python_dir, size)
+    os.makedirs(out_dir, exist_ok=True)
+    
+    print(f"\n[*] Processando tamanho {size}...")
+    stats_df, results_df = load_data(size)
+    
+    if stats_df is None:
+        return False
+    
+    print(f"[+] Gerando graficos para n={size}...")
+    plot_tempo_medio(stats_df, out_dir, size)
+    
+    print(f"[+] Gerando tabela de estatisticas em PNG...")
+    plot_tabela(stats_df, out_dir)
+    
+    print(f"[+] Gerando tabela completa de resultados em PNG...")
+    plot_tabela_completa(results_df, out_dir)
+    
+    print(f"[OK] Arquivos salvos em {out_dir}")
+    return True
+
+
 if __name__ == "__main__":
-    out_dir_plots = os.path.join(output_dir, 'plots_python')
-    os.makedirs(out_dir_plots, exist_ok=True)
+    print("=" * 50)
+    print("Script de Geracao de Graficos e Tabelas")
+    print("=" * 50)
     
-    print("📊 Lendo dados do benchmark...")
-    stats_df, results_df = load_data()
+    # Processar cada tamanho
+    for size in SIZES:
+        success = process_size(size)
+        if not success:
+            print(f"[ERRO] Erro ao processar tamanho {size}")
     
-    print("🎨 Gerando gráficos Python com seaborn...")
-    plot_tempo_medio(stats_df, out_dir_plots)
-    
-    print("🖼️ Gerando tabela de estatísticas em PNG...")
-    plot_tabela(stats_df, out_dir_plots)
-    
-    print("🖼️ Gerando tabela completa de resultados em PNG...")
-    plot_tabela_completa(results_df, out_dir_plots)
-    
-    print(f"✅ Arquivos salvos em {out_dir_plots}")
+    print("\n" + "=" * 50)
+    print("Processamento completo!")
+    print("=" * 50)

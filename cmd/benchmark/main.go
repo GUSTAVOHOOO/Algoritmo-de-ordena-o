@@ -6,13 +6,17 @@
 //
 // Saída:
 //
-//	output/benchmark_results.csv  → execuções individuais
-//	output/benchmark_stats.csv    → estatísticas agregadas
+//	output/benchmark_<tipo>_<inputSize>_<iniciais>.csv
+//	Ex: benchmark_results_175000_BISMRQ.csv
+//	    benchmark_stats_175000_BISMRQ.csv
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 	"text/tabwriter"
 	"time"
 
@@ -24,36 +28,86 @@ func main() {
 	fmt.Println("╔══════════════════════════════════════════════════════╗")
 	fmt.Println("║     Benchmark de Algoritmos de Ordenação — Go        ║")
 	fmt.Println("╚══════════════════════════════════════════════════════╝")
-	fmt.Printf("  Seed fixa  : %d\n", data.Seed)
-	fmt.Printf("  Tamanho    : %d elementos\n", data.Size)
-	fmt.Printf("  Execuções  : %d por combinação\n\n", 3)
 
-	// ── Registro dos algoritmos ────────────────────────────────────────────
-	// Para adicionar um novo algoritmo: crie a struct em benchmark/algorithms.go
-	// e adicione-a aqui. Nenhum outro arquivo precisa ser alterado.
-	algorithms := []benchmark.SortAlgorithm{
+	reader := bufio.NewReader(os.Stdin)
+
+	// Captura do Tamanho do Dataset
+	fmt.Printf("\n▶ Digite o número de elementos para o dataset (padrão: %d): ", data.Size)
+	sizeInput, _ := reader.ReadString('\n')
+	sizeInput = strings.TrimSpace(sizeInput)
+	
+	inputSize := data.Size
+	if sizeInput != "" {
+		if parsedSize, err := strconv.Atoi(sizeInput); err == nil && parsedSize > 0 {
+			inputSize = parsedSize
+		} else {
+			fmt.Printf("  [!] Valor inválido. Usando padrão %d.\n", inputSize)
+		}
+	}
+
+	// ── Registro de todos os algoritmos ────────────────────────────────────
+	allAlgorithms := []benchmark.SortAlgorithm{
 		benchmark.BubbleSorter{},
 		benchmark.SelectionSorter{},
 		benchmark.InsertionSorter{},
 		benchmark.ShellSorter{},
 		benchmark.MergeSorter{},
 		benchmark.QuickSorter{},
+		benchmark.HeapSorter{},
+		benchmark.RadixSorter{},
 	}
 
+	// Captura das opções de Algoritmo
+	fmt.Println("\n▶ Selecione os algoritmos para rodar:")
+	fmt.Println("   0 - TODOS")
+	for i, algo := range allAlgorithms {
+		fmt.Printf("   %d - %s\n", i+1, algo.Name())
+	}
+	fmt.Print("  Escolha (ex: 0, ou '1,4,5') [padrão: 0]: ")
+	algoInput, _ := reader.ReadString('\n')
+	algoInput = strings.TrimSpace(algoInput)
+
+	var selectedAlgorithms []benchmark.SortAlgorithm
+	if algoInput == "" || algoInput == "0" {
+		selectedAlgorithms = allAlgorithms
+	} else {
+		choices := strings.Split(algoInput, ",")
+		for _, choice := range choices {
+			idx, err := strconv.Atoi(strings.TrimSpace(choice))
+			if err == nil && idx >= 1 && idx <= len(allAlgorithms) {
+				selectedAlgorithms = append(selectedAlgorithms, allAlgorithms[idx-1])
+			}
+		}
+		if len(selectedAlgorithms) == 0 {
+			fmt.Println("  [!] Escolhas inválidas. Adotando TODOS como padrão.")
+			selectedAlgorithms = allAlgorithms
+		}
+	}
+
+	fmt.Println("\n========================================================")
+	fmt.Printf("  Seed fixa  : %d\n", data.Seed)
+	fmt.Printf("  Tamanho    : %d elementos\n", inputSize)
+	fmt.Printf("  Algoritmos : %d selecionado(s)\n", len(selectedAlgorithms))
+	fmt.Printf("  Execuções  : %d por combinação\n", 3)
+	fmt.Println("========================================================")
+	fmt.Println()
+
 	cfg := benchmark.DefaultConfig()
+	cfg.InputSize = inputSize
 
 	// ── Aviso de tempo estimado ────────────────────────────────────────────
-	// BubbleSort e InsertionSort são O(n²). Com 175.000 elementos, cada
-	// execução no pior caso pode levar vários minutos.
-	fmt.Println("⚠️  ATENÇÃO: algoritmos O(n²) com 175.000 elementos podem levar")
-	fmt.Println("   vários minutos por execução. Total estimado: 20-60 minutos.")
-	fmt.Println("   (ShellSort será muito mais rápido)")
-	fmt.Println()
+	// BubbleSort e InsertionSort são O(n²). Com entradas gigantes, pode
+	// levar minutos.
+	if inputSize >= 150000 {
+		fmt.Printf("⚠️  ATENÇÃO: algoritmos O(n²) com %d elementos podem levar\n", inputSize)
+		fmt.Println("   vários minutos por execução.")
+		fmt.Println()
+	}
 
 	wallStart := time.Now()
 
 	// ── Execução do benchmark ──────────────────────────────────────────────
-	results := benchmark.Run(algorithms, cfg)
+	results := benchmark.Run(selectedAlgorithms, cfg)
 
 	wallElapsed := time.Since(wallStart)
 
@@ -61,10 +115,8 @@ func main() {
 	stats := benchmark.ComputeStats(results)
 
 	// ── Exportação para CSV ────────────────────────────────────────────────
-	const (
-		resultsPath = "output/benchmark_results.csv"
-		statsPath   = "output/benchmark_stats.csv"
-	)
+	resultsPath := "output/" + benchmark.GenerateFilename("results", inputSize, selectedAlgorithms)
+	statsPath := "output/" + benchmark.GenerateFilename("stats", inputSize, selectedAlgorithms)
 
 	fmt.Println("💾 Exportando resultados...")
 

@@ -1,0 +1,53 @@
+\begin{thebibliography}{1}
+
+\bibitem{biggar2008}
+Paul Biggar, Nicholas Nash, Kevin Williams, and David Gregg.
+\newblock An experimental study of sorting and branch prediction.
+\newblock {\em ACM Journal of Experimental Algorithmics}, 12:1.8:1--1.8:39,
+  2008.
+
+\bibitem{cormen2009}
+Thomas~H. Cormen, Charles~E. Leiserson, Ronald~L. Rivest, and Clifford Stein.
+\newblock {\em Introduction to Algorithms}.
+\newblock MIT Press, Cambridge, 3 edition, 2009.
+
+\bibitem{goodrich2014}
+Michael~T. Goodrich, Roberto Tamassia, and Michael~H. Goldwasser.
+\newblock {\em Data Structures and Algorithms in Java}.
+\newblock Wiley, Hoboken, 6 edition, 2014.
+
+\bibitem{hoare1962}
+C.~A.~R. Hoare.
+\newblock Quicksort.
+\newblock {\em The Computer Journal}, 5(1):10--16, 1962.
+
+\bibitem{knuth1998}
+Donald~E. Knuth.
+\newblock {\em The Art of Computer Programming, Volume 3: Sorting and
+  Searching}.
+\newblock Addison-Wesley, Reading, 2 edition, 1998.
+
+\bibitem{musser1997}
+David~R. Musser.
+\newblock Introspective sorting and selection algorithms.
+\newblock {\em Software: Practice and Experience}, 27(8):983--993, 1997.
+
+\bibitem{pizarro2020}
+Galo~Octavio Pizarro-Vasquez, Franklin Mejia~Morales, Pietro Galvez~Minervini,
+  and Miguel Botto-Tobar.
+\newblock Sorting algorithms and their execution times: An empirical
+  evaluation.
+\newblock In {\em Technology Trends --- {ICAETT} 2020}, volume 1302 of {\em
+  Advances in Intelligent Systems and Computing}, Cham, 2020. Springer.
+
+\bibitem{sedgewick2011}
+Robert Sedgewick and Kevin Wayne.
+\newblock {\em Algorithms}.
+\newblock Addison-Wesley Professional, Upper Saddle River, 4 edition, 2011.
+
+\bibitem{williams1964}
+J.~W.~J. Williams.
+\newblock Algorithm 232 ({HEAPSORT}).
+\newblock {\em Communications of the ACM}, 7(6):347--348, 1964.
+
+\end{thebibliography}

@@ -1,0 +1,92 @@
+%%% sbc-template.sty
+%%% SBC 2001 style file
+%%% created by Jomi Hubner & Rafael Bordini June 2001
+%%% updated March 2005
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{sbc-template}[2005/03/01 SBC template]
+
+\usepackage{times}
+\usepackage{geometry}
+
+\geometry{
+  top=3.5cm,
+  left=3.0cm,
+  right=3.0cm,
+  bottom=2.5cm
+}
+
+\setlength{\parindent}{1.27cm}
+\setlength{\parskip}{6pt}
+
+\renewcommand{\normalsize}{\fontsize{12}{14}\selectfont}
+\normalsize
+
+%%% title format
+\renewcommand{\maketitle}{%
+  \begin{center}%
+    {\large\bfseries\@title\par}%
+    \vspace{0.5em}%
+    {\normalsize\@author\par}%
+    \vspace{0.5em}%
+    {\normalsize\@address\par}%
+  \end{center}%
+  \vspace{1em}%
+}
+
+%%% address and email commands
+\newcommand{\address}[1]{\gdef\@address{#1}}
+\gdef\@address{}
+\newcommand{\nextinstitute}{\vspace{0.3em}}
+\newcommand{\email}[1]{\texttt{#1}}
+
+%%% inst command for affiliation superscripts
+\newcommand{\inst}[1]{\textsuperscript{#1}}
+
+%%% abstract environment (English)
+\renewenvironment{abstract}{%
+  \vspace{0.5em}%
+  \begin{center}%
+    \bfseries Abstract%
+  \end{center}%
+  \begin{list}{}{%
+    \setlength{\leftmargin}{1.27cm}%
+    \setlength{\rightmargin}{1.27cm}%
+    \setlength{\listparindent}{0pt}%
+    \setlength{\itemindent}{0pt}%
+    \setlength{\parsep}{0pt}%
+  }%
+  \item\relax\fontsize{10}{12}\selectfont%
+}{%
+  \end{list}%
+  \vspace{0.5em}%
+}
+
+%%% resumo environment (Portuguese)
+\newenvironment{resumo}{%
+  \vspace{0.5em}%
+  \begin{center}%
+    \bfseries Resumo%
+  \end{center}%
+  \begin{list}{}{%
+    \setlength{\leftmargin}{1.27cm}%
+    \setlength{\rightmargin}{1.27cm}%
+    \setlength{\listparindent}{0pt}%
+    \setlength{\itemindent}{0pt}%
+    \setlength{\parsep}{0pt}%
+  }%
+  \item\relax\fontsize{10}{12}\selectfont%
+}{%
+  \end{list}%
+  \vspace{0.5em}%
+}
+
+%%% caption formatting
+\usepackage{caption}
+\captionsetup{
+  font={small,bf,sf},
+  labelsep=period,
+  justification=centering
+}
+
+\endinput

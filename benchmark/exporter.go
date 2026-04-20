@@ -115,6 +115,29 @@ func formatFloat(f float64) string {
 	return strconv.FormatFloat(f, 'f', 3, 64)
 }
 
+// GenerateFilename gera um nome de arquivo no formato:
+// benchmark_<tipo>_<inputSize>_<iniciais>.csv
+// Ex: benchmark_results_175000_BISMRQ.csv
+func GenerateFilename(base string, inputSize int, algorithms []SortAlgorithm) string {
+	var initials string
+	for _, algo := range algorithms {
+		initials += getInitials(algo.Name())
+	}
+	return fmt.Sprintf("benchmark_%s_%d_%s.csv", base, inputSize, initials)
+}
+
+// getInitials retorna as iniciais em maiúsculas de um nome de algoritmo.
+// Ex: "BubbleSort" -> "BS", "QuickSort" -> "QS"
+func getInitials(name string) string {
+	var result []rune
+	for i, r := range name {
+		if i == 0 || (r >= 'A' && r <= 'Z') {
+			result = append(result, r)
+		}
+	}
+	return string(result)
+}
+
 // dirOf retorna o diretório pai de um caminho de arquivo.
 func dirOf(path string) string {
 	for i := len(path) - 1; i >= 0; i-- {
