@@ -12,7 +12,7 @@ const (
 	Seed int64 = 42
 
 	// Size é o tamanho padrão dos datasets (175.000 elementos).
-	Size = 1000
+	Size = 175_000
 )
 
 // DataType representa o tipo de dataset gerado.

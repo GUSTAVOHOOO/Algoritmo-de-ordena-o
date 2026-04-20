@@ -36,6 +36,8 @@ func main() {
 		benchmark.SelectionSorter{},
 		benchmark.InsertionSorter{},
 		benchmark.ShellSorter{},
+		benchmark.MergeSorter{},
+		benchmark.QuickSorter{},
 	}
 
 	cfg := benchmark.DefaultConfig()

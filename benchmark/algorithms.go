@@ -137,3 +137,108 @@ func (ShellSorter) Sort(arr []int) SortResult {
 	}
 	return SortResult{arr, cmp, swaps}
 }
+
+// ─────────────────────────────────────────────────────────────
+// Merge Sort
+// Complexidade: O(n log n) em todos os casos; Memória O(n)
+// ─────────────────────────────────────────────────────────────
+
+// MergeSorter implementa SortAlgorithm com contagem de operações.
+type MergeSorter struct{}
+
+func (MergeSorter) Name() string { return "MergeSort" }
+
+func (MergeSorter) Sort(arr []int) SortResult {
+	var cmp, swaps int64
+	res := mergeSortInstrumented(arr, &cmp, &swaps)
+	return SortResult{res, cmp, swaps}
+}
+
+func mergeSortInstrumented(arr []int, cmp, swaps *int64) []int {
+	if len(arr) <= 1 {
+		return arr
+	}
+	mid := len(arr) / 2
+	left := mergeSortInstrumented(arr[:mid], cmp, swaps)
+	right := mergeSortInstrumented(arr[mid:], cmp, swaps)
+	return mergeInstrumented(left, right, cmp, swaps)
+}
+
+func mergeInstrumented(left, right []int, cmp, swaps *int64) []int {
+	result := make([]int, 0, len(left)+len(right))
+	i, j := 0, 0
+	for i < len(left) && j < len(right) {
+		*cmp++
+		if left[i] <= right[j] {
+			result = append(result, left[i])
+			i++
+		} else {
+			result = append(result, right[j])
+			j++
+		}
+		*swaps++
+	}
+	for i < len(left) {
+		result = append(result, left[i])
+		i++
+		*swaps++
+	}
+	for j < len(right) {
+		result = append(result, right[j])
+		j++
+		*swaps++
+	}
+	return result
+}
+
+// ─────────────────────────────────────────────────────────────
+// Quick Sort
+// Complexidade: O(n log n) médio; O(n²) pior caso
+// ─────────────────────────────────────────────────────────────
+
+// QuickSorter implementa SortAlgorithm com contagem de operações.
+type QuickSorter struct{}
+
+func (QuickSorter) Name() string { return "QuickSort" }
+
+func (QuickSorter) Sort(arr []int) SortResult {
+	var cmp, swaps int64
+	quickSortInstrumented(arr, 0, len(arr)-1, &cmp, &swaps)
+	return SortResult{arr, cmp, swaps}
+}
+
+func quickSortInstrumented(arr []int, low, high int, cmp, swaps *int64) {
+	if low < high {
+		p := partitionInstrumented(arr, low, high, cmp, swaps)
+		quickSortInstrumented(arr, low, p, cmp, swaps)
+		quickSortInstrumented(arr, p+1, high, cmp, swaps)
+	}
+}
+
+func partitionInstrumented(arr []int, low, high int, cmp, swaps *int64) int {
+	// Pivô mediano para mitigar O(n²) em entradas já ordenadas/invertidas
+	pivot := arr[(low+high)/2]
+	i := low - 1
+	j := high + 1
+	for {
+		for {
+			i++
+			*cmp++
+			if arr[i] >= pivot {
+				break
+			}
+		}
+		for {
+			j--
+			*cmp++
+			if arr[j] <= pivot {
+				break
+			}
+		}
+		if i >= j {
+			return j
+		}
+		arr[i], arr[j] = arr[j], arr[i]
+		*swaps++
+	}
+}

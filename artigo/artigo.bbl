@@ -1,0 +1,40 @@
+\begin{thebibliography}{1}
+
+\bibitem{biggar2008}
+Paul Biggar, Nicholas Nash, Kevin Williams, and David Gregg.
+\newblock An experimental study of sorting and branch prediction.
+\newblock {\em ACM Journal of Experimental Algorithmics}, 12:1.8:1--1.8:39,
+  2008.
+
+\bibitem{cormen2009}
+Thomas~H. Cormen, Charles~E. Leiserson, Ronald~L. Rivest, and Clifford Stein.
+\newblock {\em Introduction to Algorithms}.
+\newblock MIT Press, Cambridge, 3 edition, 2009.
+
+\bibitem{knuth1998}
+Donald~E. Knuth.
+\newblock {\em The Art of Computer Programming, Volume 3: Sorting and
+  Searching}.
+\newblock Addison-Wesley, Reading, 2 edition, 1998.
+
+\bibitem{pizarro2020}
+Galo~Octavio Pizarro-Vasquez, Franklin Mejia~Morales, Pietro Galvez~Minervini,
+  and Miguel Botto-Tobar.
+\newblock Sorting algorithms and their execution times: An empirical
+  evaluation.
+\newblock In {\em Technology Trends --- {ICAETT} 2020}, volume 1302 of {\em
+  Advances in Intelligent Systems and Computing}, Cham, 2020. Springer.
+
+\bibitem{sedgewick1996}
+Robert Sedgewick.
+\newblock Analysis of shellsort and related algorithms.
+\newblock In {\em Algorithms --- {ESA} '96, 4th Annual European Symposium},
+  volume 1136 of {\em Lecture Notes in Computer Science}, Berlin, Heidelberg,
+  1996. Springer.
+
+\bibitem{shell1959}
+Donald~L. Shell.
+\newblock A high-speed sorting procedure.
+\newblock {\em Communications of the ACM}, 2(7):30--32, July 1959.
+
+\end{thebibliography}
