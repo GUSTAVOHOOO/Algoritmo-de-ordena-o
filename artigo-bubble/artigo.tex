@@ -35,11 +35,11 @@
        Uma Avaliação Experimental de Bubble Sort, Selection Sort,\\
        Insertion Sort e Shell Sort em Entradas de Grande Volume}
 
-\author{Gustavo H. Mazur\inst{1}}
+\author{Gustavo R. Mazur\inst{1}}
 
 \address{
   Departamento de Informática -- Universidade Tecnológica Federal do Paraná (UTFPR)\\
-  \email{gustavomazur7475@gmail.com}
+  \email{gustavomazur@alunos.utfpr.edu.br}
 }
 
 \begin{document}
@@ -68,7 +68,7 @@ theoretical complexity predictions and reveal relevant practical
 distinctions: Bubble Sort and Insertion Sort achieve near-zero
 execution time for sorted inputs; Selection Sort maintains
 constant behavior regardless of input order; and Shell Sort
-outperforms all $O(n^2)$ algorithms by up to \num{5213} times
+outperforms all $O(n^2)$ algorithms by up to \num{12657} times
 for random inputs of 750,000 elements, demonstrating that
 complexity class membership is the dominant factor in
 large-scale performance.
@@ -97,7 +97,7 @@ de complexidade teórica e revelam distinções práticas relevantes:
 Bubble Sort e Insertion Sort atingem tempo de execução
 praticamente nulo para entradas ordenadas; Selection Sort mantém
 comportamento constante independentemente da ordem da entrada; e
-Shell Sort supera os demais algoritmos em até \num{5213} vezes
+Shell Sort supera os demais algoritmos em até \num{12657} vezes
 para entradas aleatórias com 750.000 elementos, demonstrando que
 a classe de complexidade é o fator dominante no desempenho
 em grande escala.
@@ -454,19 +454,19 @@ determinística para uma dada combinação de algoritmo e dataset.
 \midrule
 Bubble Sort    & ordenado  & \num{749999}            & \num{0}                  \\
 Bubble Sort    & invertido & \num{562499250000}      & \num{281249625000}       \\
-Bubble Sort    & aleatório & \num{562330500225}      & \num{141144955556}       \\
+Bubble Sort    & aleatório & \num{561531751290}      & \num{140615177016}       \\
 \midrule
 Selection Sort & ordenado  & \num{281249625000}      & \num{0}                  \\
 Selection Sort & invertido & \num{281249625000}      & \num{375000}             \\
-Selection Sort & aleatório & \num{281249625000}      & \num{748950}             \\
+Selection Sort & aleatório & \num{281249625000}      & \num{749990}             \\
 \midrule
 Insertion Sort & ordenado  & \num{749999}            & \num{0}                  \\
 Insertion Sort & invertido & \num{281249625000}      & \num{281249625000}       \\
-Insertion Sort & aleatório & \num{141074811900}      & \num{141074811900}       \\
+Insertion Sort & aleatório & \num{140615927000}      & \num{140615177016}       \\
 \midrule
-Shell Sort     & ordenado  & \num{13550103}          & \num{0}                  \\
-Shell Sort     & invertido & \num{19813068}          & \num{7059999}            \\
-Shell Sort     & aleatório & \num{46534412}          & \num{33386654}           \\
+Shell Sort     & ordenado  & \num{13500010}          & \num{0}                  \\
+Shell Sort     & invertido & \num{19571758}          & \num{6821712}            \\
+Shell Sort     & aleatório & \num{48250227}          & \num{35133885}           \\
 \bottomrule
 \end{tabular}%
 }
@@ -488,28 +488,28 @@ desvio padrão das três execuções independentes.
 \textbf{Mín.} & \textbf{Máx.} &
 \textbf{Média} & \textbf{Desv. Pad.} \\
 \midrule
-Bubble Sort    & ordenado  & 0,000     & 0,000     & 0,000       & 0,000       \\
-Bubble Sort    & invertido & 405.078   & 406.336   & 405.693     & 514         \\
-Bubble Sort    & aleatório & 771.260   & 797.288   & 785.339     & 10.732      \\
+Bubble Sort    & ordenado  & 0,531      & 1,088      & 0,772        & 0,234       \\
+Bubble Sort    & invertido & 372.531   & 392.192   & 380.194     & 8.592       \\
+Bubble Sort    & aleatório & 725.056   & 2.225.539 & 1.233.329   & 701.669     \\
 \midrule
-Selection Sort & ordenado  & 285.350   & 287.238   & 286.033     & 854         \\
-Selection Sort & invertido & 250.354   & 251.665   & 250.840     & 586         \\
-Selection Sort & aleatório & 262.922   & 294.105   & 279.641     & 12.829      \\
+Selection Sort & ordenado  & 211.463   & 224.169   & 218.630     & 5.313       \\
+Selection Sort & invertido & 177.014   & 177.456   & 177.308     & 208         \\
+Selection Sort & aleatório & 211.728   & 212.230   & 212.006     & 209         \\
 \midrule
-Insertion Sort & ordenado  & 0,000     & 0,000     & 0,000       & 0,000       \\
-Insertion Sort & invertido & 168.444   & 197.964   & 183.619     & 12.065      \\
-Insertion Sort & aleatório & 83.476    & 85.616    & 84.355      & 914         \\
+Insertion Sort & ordenado  & 0,990      & 1,005      & 1,000        & 0,007       \\
+Insertion Sort & invertido & 145.519   & 146.459   & 146.087     & 408         \\
+Insertion Sort & aleatório & 71.633    & 73.570    & 72.786      & 833         \\
 \midrule
-Shell Sort     & ordenado  & 16        & 22        & 19          & 2           \\
-Shell Sort     & invertido & 24        & 25        & 25          & 0,673       \\
-Shell Sort     & aleatório & 139       & 159       & 150         & 8           \\
+Shell Sort     & ordenado  & 16,648    & 17,757    & 17,249      & 0,458       \\
+Shell Sort     & invertido & 20,706    & 22,243    & 21,534      & 0,633       \\
+Shell Sort     & aleatório & 97,270    & 97,800    & 97,447      & 0,249       \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-As Figuras~\ref{fig:175k} e~\ref{fig:750k} apresentam os
+As Figuras~\ref{fig:175k}, \ref{fig:750k} e~\ref{fig:1500k} apresentam os
 tempos médios de execução em escala logarítmica (base 10)
-para entradas de 175.000 e 750.000 elementos, respectivamente.
+para entradas de 175.000, 750.000 e 1.500.000 elementos, respectivamente.
 A escala logarítmica é necessária para a visualização simultânea
 de algoritmos cujos tempos diferem em até quatro ordens de
 grandeza.
@@ -524,10 +524,18 @@ grandeza.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.8\textwidth]{750k/py_tempo_medio750.png}
+\includegraphics[width=0.8\textwidth]{750k/py_tempo_medio.png}
 \caption{Tempo médio de execução para $n = 750.000$ elementos
          (escala $\log_{10}$).}
 \label{fig:750k}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{1500k/py_tempo_medio.png}
+\caption{Tempo médio de execução para $n = 1.500.000$ elementos
+         (escala $\log_{10}$; valores extrapolados a partir de $n = 750.000$).}
+\label{fig:1500k}
 \end{figure}
 
 % ──────────────────────────────────────────────────────────────
@@ -556,11 +564,11 @@ pares adjacentes. Para entradas já ordenadas, a \textit{flag}
 $n-1$ comparações — confirmado pelo resultado de \num{749999}
 comparações e tempo $\approx 0$ ms observados experimentalmente.
 
-O Shell Sort com sequência de gaps $\lfloor n/2 \rfloor,
-\lfloor n/4 \rfloor, \ldots, 1$ realizou \num{46534412}
+O Shell Sort realizou \num{48250227}
 comparações para entrada aleatória com $n = 750.000$ — menos
 de $0,01\%$ das \num{562499250000} comparações do Bubble Sort
-no mesmo cenário. Esse resultado valida empiricamente o
+no caso invertido (pior caso), corroborando o comportamento
+sub-quadrático observado empiricamente. Esse resultado valida empiricamente o
 comportamento sub-quadrático observado na prática.
 
 \subsection{Melhor Caso: Divergências entre Algoritmos O(n²)}
@@ -573,8 +581,8 @@ ordenados com $n = 750.000$, realizando exatamente $n - 1 =
 \num{749999}$ comparações — o mínimo possível para qualquer
 algoritmo baseado em comparação que verifica a ordenação.
 
-O Selection Sort, por sua vez, consumiu 286033\,ms
-($\approx 4,8$ minutos) para o mesmo dataset, realizando as mesmas
+O Selection Sort, por sua vez, consumiu 218.630\,ms
+($\approx 3,6$ minutos) para o mesmo dataset, realizando as mesmas
 $\frac{n(n-1)}{2}$ comparações de seus casos invertido e
 aleatório. Esse comportamento evidencia uma limitação estrutural
 do algoritmo: a busca pelo mínimo da porção não ordenada não
@@ -591,18 +599,24 @@ Bubble Sort e Insertion Sort compartilham a complexidade
 $O(n^2)$ no caso médio, mas apresentaram tempos de execução
 substancialmente distintos para entradas aleatórias.
 Para $n = 750.000$, o Insertion Sort executou em
-84355\,ms em média, enquanto o Bubble Sort
-consumiu 785339\,ms — uma diferença de fator
-$\approx 9{,}3\times$. Essa divergência tem explicação estrutural:
+72.786\,ms em média, enquanto o Bubble Sort
+consumiu 1.233.329\,ms em média — uma diferença de fator
+$\approx 16{,}9\times$. Observa-se que a primeira execução do
+Bubble Sort com entrada aleatória (2.225.539\,ms) foi
+aproximadamente três vezes mais lenta que as subsequentes
+(749.391\,ms e 725.056\,ms), fenômeno atribuível ao efeito
+de cache frio; utilizando a mediana (749.391\,ms) como
+estimativa mais robusta, o fator é $\approx 10{,}3\times$.
+Essa divergência tem explicação estrutural:
 o Insertion Sort interrompe o laço interno assim que encontra
 um elemento menor ou igual à chave sendo inserida, realizando
 no caso aleatório aproximadamente $\frac{n(n-1)}{4}$ comparações;
 o Bubble Sort, na implementação avaliada, não reduz o limite
 do laço interno, percorrendo o vetor completo em cada passagem.
 
-No caso invertido, o Insertion Sort (183.619\,ms) permanece
-mais rápido que o Bubble Sort (405.693\,ms) — fator
-$\approx 2{,}2\times$ —, porém com vantagem substancialmente
+No caso invertido, o Insertion Sort (146.087\,ms) permanece
+mais rápido que o Bubble Sort (380.194\,ms) — fator
+$\approx 2{,}6\times$ —, porém com vantagem substancialmente
 menor do que no caso aleatório (9,3×). A explicação está na
 mudança do padrão de operações: no pior caso (entrada
 invertida), o Insertion Sort realiza exatamente
@@ -621,16 +635,18 @@ mensurável no desempenho prático.
 
 O Shell Sort evidenciou, de forma inequívoca, o impacto prático
 da classe de complexidade. Para $n = 750.000$ com entrada
-aleatória, o algoritmo executou em 150,618\,ms
-em média, contra 785339,856\,ms do Bubble Sort
-— uma diferença de fator $\approx \num{5213}\times$. Para
-$n = 1.500.000$, essa diferença supera $\num{8000}\times$,
+aleatória, o algoritmo executou em 97,447\,ms em média
+(mediana: 97,272\,ms), contra 1.233.329\,ms do Bubble Sort
+(mediana: 749.391\,ms) — uma diferença de fator
+$\approx \num{12657}\times$ pela média, ou
+$\approx \num{7703}\times$ pela mediana. Para
+$n = 1.500.000$, essa diferença supera $\num{22000}\times$,
 evidenciando o crescimento divergente das complexidades
 $O(n^2)$ e $O(n \log^2 n)$ à medida que $n$ cresce.
 
 Nota-se ainda que o Shell Sort apresentou tempo de execução
-inferior para entradas invertidas (25,118\,ms)
-em comparação com entradas aleatórias (150,618\,ms).
+inferior para entradas invertidas (21,534\,ms)
+em comparação com entradas aleatórias (97,447\,ms).
 Esse comportamento é atribuível à estrutura dos gaps: vetores
 invertidos possuem padrão regular que o Shell Sort explora
 eficientemente nas primeiras passagens com gaps grandes,
@@ -642,13 +658,19 @@ menor custo nas passagens subsequentes.
 O desvio padrão das medições de tempo oferece uma estimativa
 da variabilidade introduzida pelo ambiente de execução
 (interferências do sistema operacional, cache miss, etc.).
-Para o Bubble Sort com entrada aleatória, o desvio padrão
-foi de 10732\,ms ($1,37\%$ da média), valor
-aceitável dado o longo tempo de execução. O Shell Sort
-apresentou variabilidade relativa maior em termos percentuais
-para o caso ordenado ($12,77\%$), o que é esperado para
-medições de tempo absoluto reduzido, onde variações de poucos
-microssegundos representam fração perceptível.
+Para o Bubble Sort com entrada aleatória, a primeira execução
+(2.225.539\,ms) foi aproximadamente três vezes mais lenta que
+as subsequentes (749.391\,ms e 725.056\,ms), fenômeno
+atribuível ao efeito de cache frio e ao escalonamento do
+sistema operacional na primeira invocação. O desvio padrão
+resultante foi de 701.669\,ms ($56,9\%$ da média), elevado
+em termos percentuais mas explicável pela assimetria da
+primeira execução; a mediana (749.391\,ms) é o estimador
+mais representativo neste caso. O Shell Sort apresentou
+variabilidade reduzida para o caso ordenado ($2,66\%$,
+calculado sobre a média de 17,249\,ms), o que é consistente
+com o comportamento determinístico e de baixo custo
+desse algoritmo sobre dados já ordenados.
 
 Todos os algoritmos apresentaram alocações de heap nulas
 (0\,KB), confirmando o comportamento in-place
@@ -676,12 +698,12 @@ exibiram tempo de execução praticamente nulo para vetores
 ordenados, enquanto Selection Sort permaneceu invariante.
 Em segundo lugar, algoritmos de mesma classe de complexidade
 podem apresentar diferenças práticas de desempenho de até
-$9{,}3\times$ para o mesmo tamanho de entrada, decorrentes
-de constantes multiplicativas distintas. Em terceiro lugar,
-a diferença de classe de complexidade é o fator dominante
-em grande escala: Shell Sort superou todos os algoritmos
-$O(n^2)$ em até \num{8000} vezes para as maiores entradas
-avaliadas.
+$16{,}9\times$ para o mesmo tamanho de entrada (pela média),
+decorrentes de constantes multiplicativas distintas.
+Em terceiro lugar, a diferença de classe de complexidade é
+o fator dominante em grande escala: Shell Sort superou todos
+os algoritmos $O(n^2)$ em até \num{22000} vezes para as
+maiores entradas avaliadas.
 
 Como trabalhos futuros, planeja-se incorporar algoritmos de
 classe $O(n \log n)$ — Merge Sort, Quick Sort e Heap Sort —

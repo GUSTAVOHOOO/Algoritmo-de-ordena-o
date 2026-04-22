@@ -12,16 +12,26 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 output_dir = os.path.abspath(os.path.join(script_dir, '..', 'output'))
 plots_python_dir = os.path.join(output_dir, 'plots_python')
 
-SIZES = ['300000', '450000', '750000', '1000000', '2500000']
+SIZES = ['300000', '450000', '750000', '750k', '1000000', '2500000']
 
 def load_data(size):
-    stats_path = os.path.join(plots_python_dir, size, f'benchmark_stats_{size}_MSQSHSRS.csv')
-    results_path = os.path.join(plots_python_dir, size, f'benchmark_results_{size}_MSQSHSRS.csv')
-    
-    if not os.path.exists(stats_path):
-        print(f"[AVISO] Arquivo nao encontrado: {stats_path}")
+    size_dir = os.path.join(plots_python_dir, size)
+    # Busca por qualquer CSV de stats/results na pasta (nome do arquivo pode ter número diferente do folder)
+    stats_matches = glob.glob(os.path.join(size_dir, 'benchmark_stats_*.csv'))
+    results_matches = glob.glob(os.path.join(size_dir, 'benchmark_results_*.csv'))
+
+    if not stats_matches:
+        print(f"[AVISO] Arquivo stats nao encontrado em: {size_dir}")
         return None, None
-    
+    if not results_matches:
+        print(f"[AVISO] Arquivo results nao encontrado em: {size_dir}")
+        return None, None
+
+    stats_path = stats_matches[0]
+    results_path = results_matches[0]
+    print(f"  stats:   {os.path.basename(stats_path)}")
+    print(f"  results: {os.path.basename(results_path)}")
+
     stats = pd.read_csv(stats_path)
     results = pd.read_csv(results_path)
     return stats, results
@@ -38,13 +48,17 @@ def plot_tempo_medio(stats_df, out_dir, size):
         x="Algorithm",
         y="MeanMs",
         hue="DataType",
+        hue_order=["aleatorio", "invertido", "ordenado"],
         palette=["#4477AA", "#228833", "#CC6677"]
     )
     
     # Configurar escala logarítmica para o eixo Y
     ax.set_yscale('log')
     
-    size_label = f"{int(size):,}".replace(",", ".")
+    try:
+        size_label = f"{int(size):,}".replace(",", ".")
+    except ValueError:
+        size_label = size
     plt.title(f'Tempo Médio de Execução por Algoritmo (n={size_label})', fontsize=14, pad=15)
     plt.xlabel('Algoritmo', fontsize=12)
     plt.ylabel('Tempo Médio (ms) [escala log10]', fontsize=12)
